@@ -1,0 +1,82 @@
+{% load masterdata_extras %}
+{% load humanize %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+	<title>Invoice: {{ invoice_no }}</title>
+</head>
+<body>
+	<div class="container">
+		<p>
+			<h1>Hexa Bali</h1>
+			<h5>
+				Jl. Pantai Berawa No. 12<br>
+				Canggu, Kuta-Bali 80361<br>
+				0361-836454
+			</h5>
+		</p>
+		<h4>Invoice: {{ invoice_no }}</h4>
+		<p>
+			PO #: {{ po_customer }}<br>
+			Customer Name: {{ name }}<br>
+			Address: {{ address }}<br>
+			Phone: {{ phone }}<br>
+			Email: {{ email|urlize }}<br>
+			Date: {{ created_at|date:"d/M/Y" }}
+		</p>
+		<table class="table table-striped">
+		<thead class="thead-dark">
+			<tr>
+				<th scope="col">#</th>
+				<th scope="col">Product Code</th>
+				<th scope="col">Qty</th>
+				<th scope="col">Published Price</th>
+				<th scope="col">Total Amount</th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for item in invoice  %}
+			<tr>
+				<th scope="row">{{ forloop.counter }}</th>
+				<td>{{ item.code.code }}</td>
+				<td>{{ item.send_to_be_shipped|intcomma }}</td>
+				<td>Rp. {{ item.code.pub_price|intcomma }}</td>
+				<td>Rp. {{ item.code.pub_price|multiply:item.send_to_be_shipped|intcomma }}</td>
+			</tr>
+		{% endfor %}
+			<tr>
+				<td></td>
+				<td><strong>TOTAL</strong></td>
+				<td><strong>{{ total_qty|intcomma }}</strong></td>
+				<td></td>
+				<td><strong>Rp. {{ total_price|intcomma }}</strong></td>
+			</tr>
+		</tbody>
+	</table>
+	<br>
+	<p>
+		<h5>Please transfer payment to:</h5><br>
+		Bank: Bank Central Asia (BCA)<br>
+		Acc #: 9862845344<br>
+		Acc Name: CV Hexa Bali<br>
+		Branch: Kuta, Bali<br>
+	</p>
+	<p>
+		Send proof of transfer to <a href="mailto:accounts@hexaid.com">accounts@hexaid.com</a>
+	</p>
+	</div>
+
+	<!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+</body>
+</html>

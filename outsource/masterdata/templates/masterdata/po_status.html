@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+
+{% load masterdata_extras %}
+{% load humanize %}
+
+{% block title %}
+	{{ page_title }}
+{% endblock title %}
+
+{% block content %}
+	<h1>{{ po_customer }}</h1>
+
+  <div class="table-responsive-md">
+  	<table class="table table-bordered">
+  			<thead class="thead-dark">
+  			<tr>
+    				<th scope="col">#</th>
+    				<th scope="col">PO Numbers</th>
+    				<th scope="col">Customer</th>
+    				<th scope="col">PO Supplier</th>
+            <th scope="col">Total Qty Order</th>
+            <th scope="col">Total Amount Order</th>
+    				<th scope="col">Ready Date</th>
+    				<th scope="col">Shipment Date</th>
+    				<th scope="col">Status</th>
+  			</tr>
+  			</thead>
+  			<tbody>
+  			
+  			<tr {% if po_status == 'open' %}class="table-warning"{% else %}class="table-success"{% endif %}>
+    				<th scope="row">1</th>
+    					<td>
+    						<a href="{% url 'masterdata:detail' pk=po_id %}">
+    							{{ po_customer }}
+    						</a>
+    					</td>
+    					<td>{{ po_name }}</td>
+    					<td>{{ po_supplier }}</td>
+              <td>{{ po_id|get_total_qty_detail|intcomma }}</td>
+              <td>Rp. {{ po_id|get_total_amount_detail|intcomma }}</td>
+    					<td>{{ po_ready|date:"d/M/Y" }}</td>
+    					<td>{{ po_shipment|date:"d/M/Y" }}</td>
+    					<td>{{ po_status|upper }}</td>
+  			</tr>
+
+  			</tbody>
+  	</table>
+  </div>
+{% endblock content %}

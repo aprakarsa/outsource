@@ -1,0 +1,22 @@
+{% load humanize %}
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Print Barcode</title>
+</head>
+<body>
+	<center>
+		<table>
+			<tr align="center">
+				<td>
+					<span style="font-size: 18px;">{{ desc|title }}, {{ color }} {{ size }}</span>
+					<br>
+					<img src="/media/barcodes/{{ barcode }}.png" width=100%>
+					<br>
+					<span style="font-size: 35px;">Rp. {{ retail_price|intcomma }}</span>
+				</td>
+			</tr>
+		</table>
+	</center>
+</body>
+</html>

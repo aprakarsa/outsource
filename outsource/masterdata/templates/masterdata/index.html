@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% block title %}
+	{{ page_title }}
+{% endblock title %}
+
+{% block content %}
+	<h1>{{ page_title }}</h1>
+	<form method="POST">
+		{% csrf_token %}
+		<div class="form-group mt-5">
+			<strong>{{check_form.po_customer.label_tag}}</strong>
+			{{check_form.po_customer}}
+		</div>
+		<button type="submit" class="btn btn-primary btn-lg active mt-3 mx-auto">Check PO</button>
+	</form>
+{% endblock content %}

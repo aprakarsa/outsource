@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+
+{% load masterdata_extras %}
+{% load humanize %}
+
+{% block title %}
+	{{ page_title }}
+{% endblock title %}
+
+{% block content %}
+	<h1>{{ page_title }}</h1>
+
+  <div class="table-responsive-md">
+  	<table class="table table-sm table-bordered">
+  			<thead class="thead-dark">
+  			<tr>
+    				<th scope="col">#</th>
+    				<th scope="col">PO Numbers</th>
+    				<th scope="col">Customer</th>
+    				<th scope="col">PO Supplier</th>
+            <th scope="col">Total Qty Order</th>
+            <th scope="col">Total Amount Order</th>
+    				<th scope="col">Ready Date</th>
+    				<th scope="col">Shipment Date</th>
+    				<th scope="col">Status</th>
+  			</tr>
+  			</thead>
+  			<tbody>
+  			
+  			{% for po in po_list %}
+  			<tr {% if po.status == 'open' %}class="table-warning"{% else %}class="table-success"{% endif %}>
+    				<th scope="row">{{ forloop.counter }}</th>
+    					<td>
+    						<a href="{% url 'masterdata:detail' pk=po.pk %}">
+    							{{ po.po_customer }}
+    						</a>
+    					</td>
+    					<td>{{ po.customer.name }}</td>
+    					<td>{{ po.po_supplier }}</td>
+              <td>{{ po.id|get_total_qty_detail|intcomma }}</td>
+              <td>Rp. {{ po.id|get_total_amount_detail|intcomma }}</td>
+    					<td>{{ po.ready_date|date:"d/M/Y" }}</td>
+    					<td>{{ po.shipment_date|date:"d/M/Y" }}</td>
+    					<td>{{ po.status|upper }}</td>
+  			</tr>
+  			{% endfor %}
+
+  			</tbody>
+  	</table>
+  </div>
+{% endblock content %}

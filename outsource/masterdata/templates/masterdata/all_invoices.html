@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% load masterdata_extras %}
+{% load humanize %}
+
+{% block title %}
+	{{ page_title }}
+{% endblock title %}
+
+{% block content %}
+	<h1>{{ page_title }}</h1>
+
+	<div class="table-responsive-md">
+		<table class="table table-striped">
+			<thead class="thead-dark">
+				<tr>
+					<th scope="col">#</th>
+					<th scope="col">Invoice #</th>
+					<th scope="col">PO #</th>
+					<th scope="col">Customer</th>
+					<th scope="col">Total Qty</th>
+					<th scope="col">Total Amount</th>
+					<th scope="col">Invoice Created</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for invoice in all_invoices  %}
+				<tr>
+					<th scope="row">{{ forloop.counter }}</th>
+					<td><a href="{% url 'masterdata:display_invoice' pk=invoice.invoice_no %}" target="_blank">{{ invoice.invoice_no }}</a></td>
+					<td>{{ invoice.po_customer|get_po }}</td>
+					<td>{{ invoice.invoice_no|get_cust_name }}</td>
+					<td>{{ invoice.invoice_no|get_total_qty|intcomma }}</td>
+					<td>Rp. {{ invoice.invoice_no|get_total_amount|intcomma }}</td>
+					<td>{{ invoice.invoice_no|get_inv_date|date:"d/M/Y" }}</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+{% endblock content %}

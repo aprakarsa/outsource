@@ -1,0 +1,139 @@
+{% extends "layout.html" %}
+
+{% load masterdata_extras %}
+{% load humanize %}
+
+{% block title %}
+	{{ page_title }}
+{% endblock title %}
+
+{% block content %}
+	<h2>{{ po_numbers }}</h2>
+	<h5>Customer: {{ po_customer }}</h5>
+	<h5>Ready: {{ ready_date|date:"d/M/Y" }}</h5>
+	<h5>Shipment: {{ shipment_date|date:"d/M/Y" }}</h5>
+	<h5>PO Supplier: {{ po_supplier }}</h5>
+	{% if po_status == 'completed' %}
+	<p>
+		<button type="button" class="btn btn-success" disabled>{{ po_status|upper }}</button>
+	</p>
+	{% else %}
+		
+		{% if user.is_authenticated %}
+			<p align="left">
+			<!-- Button trigger modal -->
+			<button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModalCenter" {% if total_qty_invoice == 0 %}disabled {% else %} {% endif %} >
+			  Invoice this PO
+			</button>
+
+			<!-- Modal -->
+			<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+			  <div class="modal-dialog modal-dialog-centered" role="document">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <h5 class="modal-title" id="exampleModalLongTitle">Confirmation</h5>
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			          <span aria-hidden="true">&times;</span>
+			        </button>
+			      </div>
+			      <div class="modal-body">
+			        Are you sure you want to invoice this PO?
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+			        <a href="{% url 'masterdata:invoice' pk=prod_id %}"><button type="button" class="btn btn-primary">Yes I am sure</button></a>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+			</p>
+		{% else %}
+			<p>
+				<button type="button" class="btn btn-warning" disabled>{{ po_status|upper }}</button>
+			</p>
+		{%endif %}
+
+	{% endif %}
+
+	<div class="table-responsive-md">
+		<table class="table table-striped">
+			<thead class="thead-dark">
+				<tr>
+					<th scope="col">#</th>
+					<th scope="col">Product Code</th>
+					<th scope="col">Qty Order</th>
+					<th scope="col">Qty Ready</th>
+					<th scope="col">Qty invoice</th>
+					<th scope="col">Qty Shipped</th>
+					<th scope="col">Qty Balance</th>
+					<th scope="col">Published Price</th>
+					<th scope="col">Amount Order</th>
+					<th scope="col">Amount Ready</th>
+					<th scope="col">Amount Invoice</th>
+					<th scope="col">Amount Shipped</th>
+					
+					{% if user.is_authenticated %}
+						<th scope="col">Amount Profit</th>
+					{% else %}
+
+					{% endif%}
+					<th scope="col">Print Barcode</th>
+					<th scope="col">Product Image</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for product in po_products  %}
+				<tr>
+					<th scope="row">{{ forloop.counter }}</th>
+					<td>{{ product.code.code }}</td>
+					<td>{{ product.qty_order|intcomma }}</td>
+					<td>{{ product.qty_ready|intcomma }}</td>
+					<td>{{ product.qty_invoice|intcomma }}</td>
+					<td>{{ product.qty_shipped|intcomma }}</td>
+					<td>{{ product.qty_shipped|subtract:product.qty_order|intcomma }}</td>
+					<td>{{ product.code.pub_price|intcomma }}</td>
+					<td>{{ product.code.pub_price|multiply:product.qty_order|intcomma }}</td>
+					<td>{{ product.code.pub_price|multiply:product.qty_ready|intcomma }}</td>
+					<td>{{ product.code.pub_price|multiply:product.qty_invoice|intcomma }}</td>
+					<td>{{ product.code.pub_price|multiply:product.qty_shipped|intcomma }}</td>
+
+					{% if user.is_authenticated %}
+						<td>{{ product.code.prod_price|multiply:product.qty_shipped|intcomma }}</td>
+					{% else %}
+
+					{% endif%}
+					<td><a href="{% url 'masterdata:barcode' pk=product.code.id %}" target="_blank">[create]</a></td>
+					<td>
+						<a href="{{ product.code.image.url }}" target="_blank">
+							<img class="rounded-circle" src="{{ product.code.image.url }}" width="50px">
+						</a>
+					</td> 
+				</tr>
+			{% endfor %}
+				<tr>
+					<td></td>
+					<td><strong>TOTAL</strong></td>
+					<td><strong>{{ total_qty_order|intcomma }}</strong></td>
+					<td><strong>{{ total_qty_ready|intcomma }}</strong></td>
+					<td><strong>{{ total_qty_invoice|intcomma }}</strong></td>
+					<td><strong>{{ total_qty_shipped|intcomma }}</strong></td>
+					<td><strong>{{ total_qty_shipped|subtract:total_qty_order|intcomma }}</strong></td>
+					<td></td>
+					<td><strong>{{ total_amount_order|intcomma }}</strong></td>
+					<td><strong>{{ total_amount_ready|intcomma }}</strong></td>
+					<td><strong>{{ total_amount_invoice|intcomma }}</strong></td>
+					<td><strong>{{ total_amount_shipped|intcomma }}</strong></td>
+
+					{% if user.is_authenticated %}
+						<td><strong>{{ total_amount_profit|intcomma }}</strong></td>
+						<td></td>
+					{% else %}
+
+					{% endif%}
+					
+					<td></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+{% endblock content %}
